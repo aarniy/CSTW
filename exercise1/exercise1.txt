@@ -1,0 +1,100 @@
+To get the key from ciphered text and the original message we have to convert letters from "Hi Kimmo" to ASCII binary and then see if 1 or 0 would result to the respected ciphered bit when XOR with original messages letters binary. XOR results in 1 when bits are different and 0 when same.
+
+example: for H in ASCII binary is 01001000 K1 is unknown and C1 is the result of XOR operation
+
+01001000 ('H')
+xxxxxxxx (K1)	from left to right to get 0 from 0 only possible solution is that first bit is 0
+01101001 (C1)
+
+01001000 ('H')
+0xxxxxxx (K1) 	to get 1 from 1 bit in key must be 0
+01101001 (C1)
+
+01001000 ('H')
+00xxxxxx (K1)	
+01101001 (C1)
+
+This continues until key is solved which gives us the keys
+
+   ASCII	XOR crypted	Key
+H: 01001000	01101001	00100001	
+i: 01101001	00010101	01111101
+ : 00100000	01011111	01111111
+K: 01001011	01001110	00000101
+i: 01101001	00100000	01001001
+m: 01101101	00011100	01110001
+m: 01101101	10101101 	11000000
+o: 01101111	01100001	00001110
+
+Task 1.1 To produce "No Rauli" with same one-time pad we have convert it first into binary
+
+   ASCII	KEY		CIPHER
+N: 01001110	00100001	01101111
+o: 01101111	01111101	00010011
+ : 00100000	01111111	01011111
+R: 01010010	00000101	01010111
+a: 01100001	01001001	00101000
+u: 01110101	01110001	00000100
+l: 01101100	11000000	10101100
+i: 01101001	00001110	01100111
+
+Task 2.2 I used word AYlitalo and the same key:
+
+   ASCII	KEY		CIPHER
+A: 01000001	00100001	01100000
+Y: 01011001	01111101	00100101
+l: 01101100	01111111	00010011
+i: 01101001	00000101	01101100
+t: 01110100	01001001	00111101
+a: 01100001	01110001	00010000
+l: 01101100	11000000	10101100
+o: 01101111	00001110	01100001
+
+Ciphertexts can be any length, but the key must be equally long as the text. With this key longer than 8 characters is not possible.
+
+Task 1.3
+
+The secret one-time pad is already given above. One-time pad is secure only when the key is as long as the plaintext, is random, used only once and the key is kept secret.
+
+
+Task 2.1
+
+For this task I tried to make my own program but it could not solve it, so I used this website: https://www.boxentriq.com/code-breaking/vigenere-cipher
+
+With Auto Solve feature it cracked the cipher fast and gave the secret key: random
+
+CRYPTOGRAPHY REARRANGES POWER IT CONFIGURES WHO CAN DO WHAT FROM WHAT THIS MAKES CRYPTOGRAPHY AN INHERENTLY POLITICAL TOOL AND IT CONFERS ON THE FIELD AN INTRINSICALLY MORAL DIMENSION THE SNOWDEN REVELATIONS MOTIVATE A REASSESSMENT OF
+
+Task 2.2
+
+Its from  The Moral Character of Cryptographic Work by Phillip Rogaway's articles abstract.
+
+
+Task 3.1
+
+/dev/random and /dev/urandom are special files in Unix-like operating systems. Their purpose is to generate secure pseudorandom numbers. random is a blocking device and will generate data when enough noise from the environment has been collected. urandom is non-blocking and reuses its internal entropy to generate random numbers.
+
+Task 3.2 
+
+1) dd if=/dev/urandom of=random_data_urandom.bin bs=1M count=1
+
+2) dd if=/dev/random of=random_data_random.bin bs=1M count=1
+
+4) Bash function $RANDOM (file=bash_random.sh)
+
+3) Python secret library (file=rand1.py)
+
+Task 3.3
+
+p-value measures strength of the testing result. It shows the the chance that the observed data would occur if the null hypothesis were true is represented by the p-value. Null hypothesis is a common statement that shows there is no link between two measurements. In most tests test pass if p-value goes between 0.01 and 0.99 and tests with p-value out of that range suggests data might not be random when leaning on null hypothesis. High p-value mostly shows the test failing to prove it is not random.
+
+Task 3.4
+
+/dev/urandom and /dev/random
+BCryptGenRandom on Windows
+System.Security.Cryptography.RandomNumberGenerator
+Get-Random on PowerShell if it uses System.Security.Cryptography.RandomNumberGenerator
+openssl rand method
+Kernel syscall getrandom this uses /dev/urandom
+
+The rest are considered as pseudorandom number generators, which are unsafe for cryptographic purposes.
