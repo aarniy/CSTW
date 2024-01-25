@@ -1,0 +1,180 @@
+Exercise 2 
+
+Task 1.1
+
+Nonce is number that is used only once. Its not a secret and often sent with the ciphertext. In CTR its purpose is to make same plaintext encrypt differently. Salt is a random data that is added in hashing processes. Usually used in password hashing but in AES it is not used. So in short nonce is used in some encrption modes for uniqueness and salt is used as additional layer for security.
+
+Task 1.2
+
+In ECB the the first and second blocks of the cipher text are identical, that indicates same plaintext blocks are encrypted the same way. CBC mode uses initalization vector for the first block and then XORs the next block with previous block resulting the cipher blocks being differrent from each other. CTR uses an encrypted counter value for each block, which makes each ciphered block different.
+
+Task 1.3
+
+In terms of lenght ECB and CBC are similar and may have some padding. CTR encrypted messages are the same length as plaintext, but it includes nonce which makes it look longer.
+
+
+
+Task 2.1.1
+
+Commands and time on generated public and private keys below:
+
+LEGACY RSA:
+
+$ time openssl genrsa -out rsa-legacy-private.pem 3078
+
+real    2.06s
+user    2.06s
+sys     0.00s
+cpu     99%
+
+
+$ time openssl rsa -in rsa-legacy-private.pem -pubout -out rsa-legacy-public.pem
+writing RSA key
+
+real    0.00s
+user    0.00s
+sys     0.00s
+cpu     94%
+
+NEWER RSA:
+
+$ time openssl genpkey -algorithm RSA -out rsa-new-private.pem -pkeyopt rsa_keygen_bits:3078
+
+
+real    0.55s
+user    0.53s
+sys     0.02s
+cpu     99%
+
+$ time openssl rsa -pubout -in rsa-new-private.pem -out rsa-new-public.pem 
+writing RSA key
+
+real    0.00s
+user    0.00s
+sys     0.00s
+cpu     95%
+
+
+ECDSA: 
+
+$ time openssl ecparam -name secp256r1 -genkey -out ecdsa-secp256r1-private.pem
+using curve name prime256v1 instead of secp256r1
+
+real    0.01s
+user    0.00s
+sys     0.01s
+cpu     95%
+
+$ time openssl ec -in ecdsa-secp256r1-private.pem -pubout -out ecdsa-secp256r1-public.pem
+read EC key
+writing EC key
+
+real    0.00s
+user    0.00s
+sys     0.00s
+cpu     92%
+
+
+$ time openssl genpkey -algorithm EC -out ecdsa-curve25519-private.pem -pkeyopt ec_paramgen_curve:prime256v1
+
+real    0.01s
+user    0.00s
+sys     0.00s
+cpu     94%
+
+
+time openssl ec -in ecdsa-curve25519-private.pem -pubout -out ecdsa-curve25519-public.pem
+read EC key
+writing EC key
+
+real    0.00s
+user    0.00s
+sys     0.00s
+cpu     94%
+
+
+EdDSA:
+
+$ time openssl genpkey -algorithm ED25519 -out ed25519-private.pem
+
+real    0.01s
+user    0.00s
+sys     0.00s
+cpu     95%
+
+
+$ time openssl pkey -in ed25519-private.pem -pubout -out ed25519-public.pem
+
+real    0.01s
+user    0.00s
+sys     0.00s
+cpu     93%
+
+
+
+
+Task 2.1.2
+
+genrsa(legacy) generates private and public keys in PKCS#1 format. genpkey gives both keys in PKCS#8 format which is more secure.
+
+Task 2.1.3
+
+Curve25519(curve) is faster than secp256r1(secp). Both are considered secure but curve is more resilient. Secp is widely supported, but curve is coming more common. Secp's is inline with NIST standards and curve is capable with limited resources.
+
+Task 2.1.4
+
+Not really, with RSA I noticed small increase when upping the key size.
+
+Task 2.1.5
+
+DSA and ECDSA are secure when used correctly. Some cases are when nonce is used incorrectly have lead to vulnerabilities. ED25519 can be considered to be better due to it being easier to use.
+
+
+
+
+
+ cat ecdsa-secp256r1-public.pem  
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3BFwOlCo3JWiVjL1WQdnLWebrGbj
+yfzeRkUxRlSJPUDdSikfTwBecqXN2HIWdJei2IC/cvAxoyZQT2+7K/1A4A==
+-----END PUBLIC KEY-----
+
+$ cat ecdsa-curve25519-public.pem 
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAED51w3RjEGi4NPS0n9NgYfxiDoI4P
+2iku5kizULZq9rr4V+oViGBfvknLuF4V1yHa31y1Idv0McmgQ15b0XgZHQ==
+-----END PUBLIC KEY-----
+
+
+$ cat rsa-new-public.pem         
+-----BEGIN PUBLIC KEY-----
+MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEvs2u3nArsE5Ck9Bc1WYK+
+2GsuTkDaYepGmPKmZGLp70bWnnauqydBHGnmHDwdNopgHt/j8XEUl9yjU6KeuudN
+l0BGtQCZ5q6igFXxcYaLc/tITvtRPaOx0SQo64j4quze59UgJFZb7mVPofvhJpyQ
+oy7MHZUN45fYECgYzNxYEv1DUaUYnWX6YXkC4KFzqvEx9vtOT74Gq11Oz6f5RXm5
+ne1yp+cVnppDOeNgUQBNTV9rW/1RSftxJtqgQxSiy5V0JaFKaw1ZUa6RzFWZGGjH
+f0cH/TCwyPa5FlCpiUab6bGJ54RuzWYwphQyVQK19yKsnJ5mkZXuVwMRAsy/gZpR
++iZ8p51orEWJPQtgyhi8+CED5ts9UmdGk6kRcdsezSQvw7OzNcRqOuWgsIwtMhE7
+lg2Xx9+ojchlEz053m+fe1W3HQvh2V+8ZnKBVUTlsZSSaiXJgzTKUptVNWgBubeD
+LYeh6qVMvDsfncDfvZ7YvxTt0NMKC32Sz2qQYkJaqOqTAgMBAAE=
+-----END PUBLIC KEY-----
+
+
+$ cat ed25519-public.pem         
+-----BEGIN PUBLIC KEY-----
+MCowBQYDK2VwAyEAcUUS0W90SUrY5ahm1arCGbG+wUYT4oSNaeEkM6rfEPI=
+-----END PUBLIC KEY-----
+
+
+$ cat rsa-legacy-public.pem 
+-----BEGIN PUBLIC KEY-----
+MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEuZD48Ls6o/g9juvU1FlTi
+3gaPywI95s5lTOmQL74wQtaQXyeV3aO+InyqtF8nPyDX3FxG8OzXwe4WoVNVhv/h
+9bxPDvzTVCNb0tqyn9P2ffpD2p7EueLqayWS2JErjJ8C5B2FfBD/fvGLXGHC1kJU
+WvRkxuNISTAK9Cu68dRsHHeWsJhyjUzLQ85LCbv59HYRcvCHJ6FYChu+9xVpB3/9
+mDldsxGOHkUL/20d9GfiOL5ivUVt/6rSO5nK0Bg9Izm+1TLorXJO4qLYzwEblvot
+vhWSyLkk3P4l3JE/qfWmzdK9d6hlMEcSE3gv0glo1795OQYOYkjVAENAFOwIezso
+au2t1U/3W6Iiysw+3N9S6WvYn5dAcbwNrn23gIRSmGf+7Z4YF731p89IV1Y12IuY
+kOM2tnpfrG7ZXKw74TIaZ3tNijLmt3dk9vGshr6CGeBgsV2NdLuuhIc/oVIDB/Wk
+LWff+AahKnOC/Rh4EqgHoMe+a7rYZbSDPk2Wf0W0D7jzAgMBAAE=
+-----END PUBLIC KEY-----
